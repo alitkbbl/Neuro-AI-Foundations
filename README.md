@@ -1,19 +1,21 @@
-# Neuro-AI-Foundations
+# Neuro-AI-Foundations 🧠💻
 
+![Project Banner](banner.png)
 
-**Neuro-AI-Foundations** is an educational and analytical Python repository for building neural models from first principles, progressing from passive membrane dynamics to spiking neurons, adaptive spiking models, synaptic dynamics, and recurrent spiking neural networks.
+## 📌 About The Project
+**Neuro-AI-Foundations** is a computational neuroscience framework designed to bridge the gap between biological neuronal dynamics and modern AI implementation techniques. This repository provides a highly optimized, Object-Oriented, and vectorized Python environment for simulating spiking neurons—from simple passive membranes to complex, adaptive networks.
 
-The goal of this project is to bridge three perspectives:
+Our core philosophy is to model biological realities using exact coupled differential equations (e.g., $C_m \frac{dV}{dt} = \dots$), solved numerically via Euler integration ($dt \le 0.1ms$), while leveraging NumPy's vectorized operations to scale these simulations to thousands of interconnected neurons efficiently.
 
+## 🚀 Key Features
+1. **Biophysical Neuron Models:** 
+   - **Passive Neuron:** Baseline membrane dynamics without action potentials.
+   - **Leaky Integrate-and-Fire (LIF):** Standard threshold-and-reset spiking dynamics.
+   - **Adaptive Exponential Integrate-and-Fire (AdEx):** Complex cortical neuron modeling incorporating an adaptation variable ($w$).
+2. **Vectorized Network Architecture:** Simulation of large-scale, recurrent networks (e.g., Balanced Networks in Asynchronous-Irregular regimes) using sparse matrix operations ($W \cdot \vec{S}$).
+3. **Interactive Analytical Notebooks:** Programmatically generated Jupyter notebooks for Phase Plane Analysis and F-I (Frequency-Current) curve evaluations.
 
-1. **Computational Neuroscience**  
-   Understanding how neurons integrate input currents, generate spikes, adapt over time, and interact in networks.
-
-
-2. **Mathematical Modeling**  
-   Deriving and simulating dynamical systems such as passive membranes, leaky integrate-and-fire neurons, nonlinear integrate-and-fire models, and adaptive exponential integrate-and-fire neurons.
-
-
-3. **Scientific Python Engineering**  
-   Implementing models with clean object-oriented programming, vectorized NumPy operations, reproducible simulations, and interactive notebooks.
-
+## 🛠️ Stack & Architecture
+- **Language:** Python 3.x
+- **Core Libraries:** `numpy` (Vectorized Math), `scipy` (Scientific computing)
+- **Analysis & Visualization:** `matplotlib`, `jupyter`, `ipywidgets`
