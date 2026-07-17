@@ -1,9 +1,6 @@
-numpy>=1.24
-scipy>=1.10
-matplotlib>=3.7
-jupyter>=1.0
-notebook>=7.0
-ipywidgets>=8.0
-nbformat>=5.9
-pytest>=7.0
-tqdm>=4.65
+numpy
+matplotlib
+jupyter
+ipywidgets
+scipy
+nbformat
