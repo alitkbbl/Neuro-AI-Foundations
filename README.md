@@ -1,4 +1,4 @@
-# Neuro-AI-Foundations 🧠💻
+# Neuro-AI-Foundations
 
 ![Project Banner](banner.png)
 
