@@ -1,6 +1,5 @@
 # Neuro-AI-Foundations
 
-
 <p align="center">
       <img src="assets/banner.png" alt="Project Banner" width="100%">
 </p>
@@ -30,25 +29,6 @@ Designed with production-grade standards to ensure accuracy and scalability:
 
 ### Project Objective
 The goal of `Neuro-AI-Foundations` is to provide a clean, rigorous software foundation for spiking neural simulations. It enables researchers and engineers to focus on mathematical analysis and emergent network behaviors, rather than implementation overhead.
-
----
-
-## ⚙️ Models used & key features
-
-| Model | Class | Key features |
-|---|---|---|
-| **Passive (RC) membrane** | `PassiveNeuron` | Linear leaky integrator, **no spike mechanism**. Baseline used to show that a threshold — not just leaky integration — is what makes "firing rate" meaningful at all. |
-| **Leaky Integrate-and-Fire** | `LIFNeuron` | Adds a hard voltage threshold, reset, and refractory period on top of the passive equation. Cheap and vectorizable — the workhorse of the 1000-neuron network. |
-| **Exponential I&F (EIF)** | `AdExNeuron` (with `a=0, b=0`) | Replaces the hard threshold with a biophysically-motivated exponential nonlinearity. Produces a genuine spike upstroke, a lower/soft rheobase, and Type I excitability. |
-| **AdEx (Adaptive Exp. I&F)** | `AdExNeuron` | Full model: exponential spike onset **+** a second state variable, the adaptation current `w`, which jumps at every spike and decays between them. Reproduces tonic spiking, spike-frequency adaptation, initial bursting, and regular bursting from the same two equations. |
-| **Synaptic kernels** | `ExponentialSynapse`, `AlphaSynapse` | Convert discrete spike trains into continuous post-synaptic current, recursively updated at every Euler step. |
-| **Background drive** | `PoissonSpikeGenerator` | Vectorized, independent homogeneous Poisson spike sources — used to drive every neuron in the network with realistic background noise. |
-| **Balanced recurrent network** | `NeuronPopulation`, `SparseConnectivity`, `BalancedNetwork` | 1000 LIF neurons, 80% excitatory / 20% inhibitory, **Dale's law enforced**, sparse random connectivity, inhibition scaled well above excitation. Reproduces the cortex-like Asynchronous-Irregular (AI) firing regime. |
-
-**Implementation features common to all models:**
-- **Object-oriented core, vectorized execution.** `BaseNeuron` defines a common interface (`step`, `simulate`, `f_i_curve`) so every model is a drop-in replacement for any other. The 1000-neuron network is NumPy arrays updated in bulk, not 1000 Python objects in a loop.
-- **Euler by default, RK4 for validation.** Every network simulation uses forward Euler at dt ≤ 0.1ms — the project standard. `BaseNeuron` additionally offers an optional 4th-order Runge-Kutta integrator, provided purely as a single-neuron analytical cross-check (see Notebook 01 and 02).
-- **Tested dynamics, not just tested syntax.** 45 unit tests check actual dynamical properties: analytical steady states, monotonic F-I curves, Dale's-law sign constraints, spike-triggered adaptation, and network stability.
 
 ---
 
@@ -111,39 +91,35 @@ pytest tests/ -v
 
 ---
 
-## 📜 The models, briefly
+## ⚙️ Models Overview & Mathematical Foundations
 
-### Passive (RC) neuron — the baseline
+This repository implements several foundational models in computational neuroscience. Below is a unified overview of their key features alongside their mathematical formulations.
 
-$$\tau_m \frac{dv}{dt} = -(v - v_{rest}) + R\,I(t)$$
+### 1. Leaky Integrate-and-Fire (LIF) / Passive Membrane
+The LIF model is the simplest spiking neuron model, treating the cell membrane as an RC circuit (resistor-capacitor). It is computationally highly efficient but lacks spike-frequency adaptation.
 
-A pure leaky integrator. No threshold, no spike, no reset. It exists to demonstrate *why* a threshold is needed at all — without one, "firing rate" has no meaning, only a graded, low-pass-filtered voltage.
+*   **Key Features:** Linear subthreshold dynamics, fixed spike threshold, computationally cheap.
+*   **Subthreshold Equation:**
+    $$ \tau_m \frac{dv}{dt} = -(v - E_L) + R\,I(t) $$
+    *Where $ \tau_m $ is the membrane time constant, $ E_L $ is the leak reversal potential (resting potential), $ R $ is membrane resistance, and $ I(t) $ is the input current.*
+*   **Spiking Mechanism:** When $ v \ge v_{th} $, a spike is emitted, and the voltage is reset to $ v_{reset} $.
 
-### Leaky Integrate-and-Fire (LIF)
+### 2. Adaptive Exponential Integrate-and-Fire (AdEx)
+The AdEx model extends the LIF model by adding an exponential voltage dependence for spike generation and a second variable for adaptation. It can reproduce a wide variety of physiological firing patterns (e.g., bursting, tonic spiking, adaptation).
 
-Same subthreshold equation as the passive neuron, plus a hard rule:
+*   **Key Features:** Realistic spike initiation (exponential), spike-frequency adaptation, subthreshold resonance.
+*   **Voltage Dynamics:**
+    $$ C_m \frac{dv}{dt} = -g_L (v - E_L) + g_L \Delta_T \exp\!\left(\frac{v - v_T}{\Delta_T}\right) - w + I(t) $$
+*   **Adaptation Dynamics:**
+    $$ \tau_w \frac{dw}{dt} = a(v - E_L) - w + b\,\tau_w \sum_f \delta(t - t^f) $$
+    *Where $ C_m $ is membrane capacitance, $ g_L $ is leak conductance, $ \Delta_T $ is the slope factor, $ v_T $ is the threshold potential, $ w $ is the adaptation current, and $ a $ and $ b $ govern subthreshold and spike-triggered adaptation, respectively. The Dirac delta function $ \delta(t - t^f) $ models the step increase in $ w $ at each spike time $ t^f $.*
 
-$$v(t) \geq v_{th} \implies v \leftarrow v_{reset}, \quad \text{spike recorded}, \quad \text{refractory for } t_{ref}$$
+### 3. Balanced Networks (Excitatory-Inhibitory Balance)
+Moving from single neurons to network-level dynamics, this repository implements sparsely connected, random networks of E (Excitatory) and I (Inhibitory) neurons.
 
-This is the workhorse of large-scale spiking network simulation because it is cheap, and it already produces a well-behaved, saturating F-I curve.
+*   **Key Features:** Asynchronous irregular (AI) firing states, fluctuation-driven spiking, sparse random connectivity.
+*   **Network Dynamics:** Neurons in the network (typically modeled as LIF or AdEx) receive a massive number of inputs. The network enters a "balanced state" where large excitatory inward currents are dynamically canceled by large inhibitory outward currents, leaving only fluctuations (noise) to drive action potentials.
 
-### AdEx — Adaptive Exponential Integrate-and-Fire
-
-AdEx replaces the hard threshold with an **exponential nonlinearity** (biophysically closer to Hodgkin–Huxley sodium activation) and couples it to a slow **adaptation current** `w`:
-
-$$C_m \frac{dv}{dt} = -g_L (v - E_L) + g_L \Delta_T \exp\!\left(\frac{v - v_T}{\Delta_T}\right) - w + I(t)$$
-
-$$\tau_w \frac{dw}{dt} = a(v - v_{rest}) - w + b\,\tau_w \sum_f \delta(t - t^f)$$
-
-On each spike ($v \to v_{peak}$): $v \leftarrow v_{reset}$ and $w \leftarrow w + b$ (the delta-function sum above is implemented exactly this way — an instantaneous jump in `w` at each spike time, not a smoothed approximation). Depending on just four parameters ($a$, $b$, $\tau_w$, $v_{reset}$), AdEx reproduces essentially every qualitative firing pattern seen in cortex: tonic spiking, spike-frequency adaptation, initial bursting, regular bursting, and irregular firing. Notebook 04 lets you feel this out interactively.
-
-### Synapses
-
-Post-synaptic currents/conductances are generated by kernel filters applied to incoming spike trains — `ExponentialSynapse` (single decay time constant, computed with an efficient recursive update) and `AlphaSynapse` (rise-and-decay). `PoissonSpikeGenerator` produces homogeneous Poisson background spike trains used to drive the balanced network.
-
-### Balanced recurrent network
-
-1000 LIF neurons, 80% excitatory / 20% inhibitory (**Dale's law enforced** — a neuron's outgoing weights are all excitatory or all inhibitory, never mixed), sparse random connectivity, and inhibitory synaptic weights scaled well above excitatory ones. Driven by independent Poisson background input to every cell. The result — reproduced in Notebook 05 with raster plots and population-rate traces — is the **Asynchronous-Irregular (AI)** regime characteristic of cortical microcircuits: low pairwise correlation, high single-neuron CV of inter-spike intervals, and a stable, low mean population rate, despite (and because of) strong recurrent excitation and inhibition fighting each other into balance.
 
 ---
 
