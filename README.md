@@ -1,57 +1,37 @@
-# 🧠 Neuro-AI-Foundations
+# Neuro-AI-Foundations
 
-**From a single leaky membrane to a thousand-neuron balanced network — implemented, derived, and visualized from first principles.**
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![NumPy](https://img.shields.io/badge/vectorized-NumPy-orange.svg)](https://numpy.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-educational%20%2B%20research--grade-brightgreen.svg)]()
+<p align="center">
+      <img src="assets/banner.png" alt="Project Banner" width="100%">
+</p>
 
-## 1. About this project
 
-Most computational neuroscience courses teach the Leaky Integrate-and-Fire (LIF) neuron as if it were the whole story, and most machine learning courses treat "neurons" as stateless dot products. **Neither is a spiking neuron.**
+## 📌 Motivation & Scope
 
-`Neuro-AI-Foundations` closes that gap by building a strict conceptual ladder, one differential equation at a time:
+Most computational neuroscience courses present the Leaky Integrate-and-Fire (LIF) neuron as the whole story.  
+Most machine learning courses treat “neurons” as stateless dot products.  
+**Neither captures what a spiking neuron really is.**
 
-```
-Passive membrane  →  LIF  →  Nonlinear (Exponential) I&F  →  AdEx  →  Balanced spiking network
-   (no spikes)      (hard      (soft, biophysical         (+ adaptation,   (1000 neurons,
-                   threshold)   spike onset)                bursting)      Dale's law, AI regime)
-```
+`Neuro-AI-Foundations` closes that gap with a strict conceptual ladder — **one differential equation at a time**:
 
-Every model is derived from its governing equation, implemented as clean, tested, vectorized NumPy code, and paired with a notebook that lets you **see** the consequence of each added term — what a hard threshold buys you, why exponential spike onset matters, what adaptation currents do to an F-I curve, and how 1000 sparsely-connected leaky neurons self-organize into the irregular, asynchronous firing regime seen in cortex.
+| Step | Model | What You Add | Spike Behaviour |
+|------|-------|--------------|-----------------|
+| 1 | Passive membrane | RC circuit, no spikes | — |
+| 2 | Leaky I&F (LIF) | Hard threshold | Fixed threshold spike |
+| 3 | Exponential I&F (EIF) | Soft, biophysical onset | Exponential non-linearity |
+| 4 | AdEx | Adaptation current | Bursting & adaptation |
+| 5 | Balanced spiking network | 1000 neurons, Dale’s law, AI regime | Irregular, asynchronous firing |
 
-This project sits deliberately at the intersection of **computational neuroscience** and **AI engineering practice**: the science is textbook-accurate (Gerstner, Brette & Gerstner, Brunel), and the code is written the way you'd write production ML infrastructure — abstract base classes, vectorized state updates, unit-tested dynamics, and reproducible notebooks.
+Every model is:
+- **Derived from its governing equation** – no black boxes.
+- **Implemented in clean, tested, vectorized NumPy** – abstract base classes, unit‑tested dynamics.
+- **Paired with a notebook** that lets you *see* the consequence of each added term: what a hard threshold buys you, why exponential spike onset matters, how adaptation reshapes the F‑I curve, and how 1000 sparsely‑connected leaky neurons self‑organise into the irregular, asynchronous firing regime observed in cortex.
 
-### Repository structure
-
-```
-Neuro-AI-Foundations/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── requirements.txt
-├── src/
-│   ├── __init__.py
-│   ├── neuron_models.py      # BaseNeuron (ABC), PassiveNeuron, LIFNeuron, AdExNeuron
-│   ├── synapse_models.py     # ExponentialSynapse, AlphaSynapse, PoissonSpikeGenerator
-│   └── network_builder.py    # NeuronPopulation, SparseConnectivity, BalancedNetwork
-├── notebooks/
-│   ├── 01_Passive_and_LIF.ipynb
-│   ├── 02_Non_Linear_Integrate_and_Fire.ipynb
-│   ├── 03_The_Need_for_Adaptation_AdEx.ipynb
-│   ├── 04_Phase_Plane_Analysis.ipynb
-│   └── 05_Balanced_Recurrent_Network.ipynb
-├── assets/                   # chart images referenced from this README
-└── tests/
-    ├── test_neuron_models.py
-    ├── test_synapse_models.py
-    └── test_network_builder.py
-```
+> **Computational neuroscience × AI engineering** – the science is textbook‑accurate (Gerstner, Brette & Gerstner, Brunel), and the code is written like production ML infrastructure: abstract base classes, vectorized state updates, unit‑tested dynamics, and reproducible notebooks.
 
 ---
 
-## 2. Models used & key features
+## ⚙️ Models used & key features
 
 | Model | Class | Key features |
 |---|---|---|
@@ -70,7 +50,7 @@ Neuro-AI-Foundations/
 
 ---
 
-## 3. Notebooks
+## 📓 Notebooks
 
 | Notebook | What it covers |
 |---|---|
@@ -82,16 +62,42 @@ Neuro-AI-Foundations/
 
 ---
 
-## 4. Installation
+## 🛠️ Installation
+
+**1. Clone the repository:**
+```bash
+git clone https://github.com/alitkbble/Neuro-AI-Foundations.git
+cd Neuro-AI-Foundations
+```
+
+**2. Set up a virtual environment (Recommended):**
+Using an isolated environment ensures dependency versions do not conflict with your other projects.
 
 ```bash
-git clone https://github.com/<your-username>/Neuro-AI-Foundations.git
-cd Neuro-AI-Foundations
-python3 -m venv .venv && source .venv/bin/activate     # optional but recommended
-pip install -r requirements.txt
+# Create the virtual environment
+python3 -m venv .venv
 
-# Enable interactive widgets + register the kernel
-python -m ipykernel install --user --name neuroai
+# Activate on Linux / macOS:
+source .venv/bin/activate
+
+# Activate on Windows:
+.venv\Scripts\activate
+```
+
+**3. Install dependencies:**
+```bash
+# Upgrade pip to avoid installation issues with scientific packages
+python -m pip install --upgrade pip
+
+# Install the required packages
+pip install -r requirements.txt
+```
+
+**4. Register the Jupyter Kernel and Launch:**
+To ensure Jupyter runs within the correct environment and interactive widgets work properly, register the local kernel before launching:
+
+```bash
+python -m ipykernel install --user --name=neuroai --display-name "Python (Neuro-AI)"
 jupyter notebook notebooks/01_Passive_and_LIF.ipynb
 ```
 
@@ -103,7 +109,7 @@ pytest tests/ -v
 
 ---
 
-## 5. The models, briefly
+## 📜 The models, briefly
 
 ### Passive (RC) neuron — the baseline
 
@@ -139,7 +145,7 @@ Post-synaptic currents/conductances are generated by kernel filters applied to i
 
 ---
 
-## 6. Main results
+## 📈 Main results
 
 The primary objective of this project is to show that everything culminates in a **genuinely emergent, network-level phenomenon** — one that no single neuron in the simulation, however sophisticated, produces on its own.
 
@@ -151,14 +157,10 @@ Running the default 1000-neuron network in `05_Balanced_Recurrent_Network.ipynb`
 
 That's the payoff of the whole ladder: the neurons doing the work here are the simplest model in the entire project (plain LIF, no adaptation, no nonlinearity) — the richness comes entirely from Dale's law, sparse recurrent connectivity, and the excitation/inhibition balance, at scale.
 
-<!-- 📊 Paste your chart from 05_Balanced_Recurrent_Network.ipynb below.
-     Save the exported image to assets/ (e.g. assets/balanced_network_result.png)
-     and update the path in the line below. -->
-
 ![Balanced network raster and population rate](assets/balanced_network_result.png)
 
 ---
 
-## License
+## ⚖️ License
 
 MIT — see [LICENSE](LICENSE). Educational and research use is warmly encouraged; please cite the primary literature referenced above if this repository informs published work.
