@@ -21,3 +21,32 @@ htmlcov/
 # OS files
 .DS_Store
 Thumbs.db
+
+# =========================
+# LaTeX Build & Temp Files
+# =========================
+*.aux
+*.bbl
+*.blg
+*.brf
+*.bcf
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.out
+*.toc
+*.log
+*.run.xml
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+# اگر از ویرایشگرهای خاصی مثل Texmaker یا VSCode استفاده می‌کنید:
+*.gz
+*.sav
+*.bak
+

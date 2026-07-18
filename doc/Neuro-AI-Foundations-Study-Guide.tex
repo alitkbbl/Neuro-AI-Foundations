@@ -1,0 +1,608 @@
+\documentclass[11pt,a4paper]{article}
+
+% =========================================================
+% Computational Neuroscience Study Guide
+% Author: Ali Taghizadeh
+% =========================================================
+
+% ---------- Page Layout ----------
+\usepackage[margin=2.3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ---------- Mathematics ----------
+\usepackage{amsmath, amssymb, mathtools}
+
+% ---------- Tables and Lists ----------
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+
+% ---------- Colors and Boxes ----------
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% ---------- Formatting ----------
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% =========================================================
+% Colors
+% =========================================================
+\definecolor{navy}{RGB}{43,108,176}
+\definecolor{burnt}{RGB}{221,107,32}
+\definecolor{leafgreen}{RGB}{47,133,90}
+\definecolor{lightgray}{RGB}{245,246,248}
+\definecolor{softblue}{RGB}{235,244,255}
+\definecolor{darkgray}{RGB}{74,85,104}
+\definecolor{midgray}{RGB}{113,128,150}
+
+% =========================================================
+% Document Metadata
+% =========================================================
+\newcommand{\GuideTitle}{Computational Neuroscience Study Guide}
+\newcommand{\GuideSubtitle}{From Passive Membranes to Balanced Spiking Networks}
+\newcommand{\GuideSource}{Personal notes based on the \texttt{Neuro-AI-Foundations} repository}
+\newcommand{\GuideAuthor}{Ali Taghizadeh}
+
+\hypersetup{
+	pdftitle={Computational Neuroscience Study Guide},
+	pdfauthor={Ali Taghizadeh},
+	pdfsubject={Computational Neuroscience and Spiking Neural Networks},
+	pdfkeywords={computational neuroscience, LIF, EIF, AdEx, balanced networks, spiking neural networks}
+}
+
+% =========================================================
+% Section Styling
+% =========================================================
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{navy}}
+{\thesection}
+{0.6em}
+{}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{darkgray}}
+{\thesubsection}
+{0.6em}
+{}
+
+\titlespacing*{\section}{0pt}{1.4em}{0.7em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.45em}
+
+% =========================================================
+% Header / Footer
+% =========================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancyhead[L]{\small\textit{Neuro-AI-Foundations --- Study Guide}}
+\fancyhead[R]{\small\GuideAuthor\quad|\quad\thepage}
+
+% =========================================================
+% List Styling
+% =========================================================
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt,leftmargin=1.4em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt,leftmargin=1.6em}
+
+% =========================================================
+% Custom Boxes
+% =========================================================
+\newtcolorbox{eqbox}[1][]{
+	enhanced,
+	colback=lightgray,
+	colframe=navy,
+	boxrule=0.6pt,
+	arc=2pt,
+	left=6pt,
+	right=6pt,
+	top=4pt,
+	bottom=4pt,
+	title={\textbf{Key Equation: #1}},
+	fonttitle=\small\bfseries,
+	coltitle=white,
+	colbacktitle=navy,
+	breakable
+}
+
+\newtcolorbox{keybox}[1][Key Takeaway]{
+	enhanced,
+	colback=green!5!white,
+	colframe=leafgreen,
+	boxrule=0.6pt,
+	arc=2pt,
+	left=6pt,
+	right=6pt,
+	top=4pt,
+	bottom=4pt,
+	title={\textbf{#1}},
+	fonttitle=\small\bfseries,
+	coltitle=white,
+	colbacktitle=leafgreen,
+	breakable
+}
+
+\newtcolorbox{defbox}[1][Definition]{
+	enhanced,
+	colback=orange!5!white,
+	colframe=burnt,
+	boxrule=0.6pt,
+	arc=2pt,
+	left=6pt,
+	right=6pt,
+	top=4pt,
+	bottom=4pt,
+	title={\textbf{#1}},
+	fonttitle=\small\bfseries,
+	coltitle=white,
+	colbacktitle=burnt,
+	breakable
+}
+
+\newtcolorbox{overviewbox}{
+	enhanced,
+	colback=softblue,
+	colframe=navy,
+	boxrule=0.7pt,
+	arc=3pt,
+	left=8pt,
+	right=8pt,
+	top=7pt,
+	bottom=7pt,
+	width=0.94\textwidth
+}
+
+% =========================================================
+% Math Shortcuts
+% =========================================================
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+
+% =========================================================
+% Title
+% =========================================================
+\title{}
+\author{}
+\date{}
+
+\begin{document}
+	
+	% =========================================================
+	% Cover Header
+	% =========================================================
+	\begin{center}
+		\vspace*{-1.2cm}
+		
+		{\Huge\bfseries\color{navy}\GuideTitle\par}
+		
+		\vspace{0.25cm}
+		
+		{\Large\color{darkgray}\GuideSubtitle\par}
+		
+		\vspace{0.35cm}
+		
+		{\normalsize\itshape\color{midgray}\GuideSource\par}
+		
+		\vspace{0.45cm}
+		
+		{\large\bfseries Author: \GuideAuthor\par}
+		
+
+		
+		\vspace{0.45cm}
+		
+		{\color{navy}\rule{0.82\textwidth}{0.8pt}}
+		
+		\vspace{0.55cm}
+		
+		\begin{overviewbox}
+			\centering
+			\small
+			\textbf{Conceptual progression covered in this guide}\\[6pt]
+			
+			Passive membrane
+			$\;\longrightarrow\;$
+			Leaky Integrate-and-Fire, LIF
+			$\;\longrightarrow\;$
+			Exponential Integrate-and-Fire, EIF
+			$\;\longrightarrow\;$
+			Adaptive Exponential I\&F, AdEx
+			$\;\longrightarrow\;$
+			Balanced spiking networks
+			
+			\vspace{5pt}
+			
+			{\footnotesize
+				\color{darkgray}
+				no spikes
+				\hspace{0.9cm}
+				hard threshold
+				\hspace{0.8cm}
+				soft nonlinear spike onset
+				\hspace{0.8cm}
+				adaptation dynamics
+				\hspace{0.8cm}
+				large-scale network regime
+			}
+		\end{overviewbox}
+		
+		\vspace{0.45cm}
+		
+		\begin{tcolorbox}[
+			enhanced,
+			colback=lightgray,
+			colframe=darkgray,
+			width=0.94\textwidth,
+			arc=3pt,
+			boxrule=0.5pt,
+			left=8pt,
+			right=8pt,
+			top=6pt,
+			bottom=6pt
+			]
+			\small
+			\textbf{Purpose of these notes.}
+			This document provides a structured path through core computational neuroscience models,
+			starting from the passive membrane equation and progressively building toward adaptive
+			single-neuron models and balanced recurrent spiking networks. The emphasis is on
+			intuition, mathematical form, and the relationship between biological mechanisms and
+			AI-oriented network computation.
+		\end{tcolorbox}
+		
+	\end{center}
+	
+	\vspace{0.2cm}
+	
+		\newpage
+	\tableofcontents
+	
+	\newpage
+
+% =====================================================================
+\section{Unit Convention (read this first)}
+% =====================================================================
+Every model in this project uses one consistent unit system. Get comfortable with it before anything else, because it's what makes every equation below dimensionally consistent \emph{without} conversion factors.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Quantity} & \textbf{Symbol} & \textbf{Unit} \\
+\midrule
+Time & $t$ & ms \\
+Voltage & $v$ & mV \\
+Current & $I$ & pA \\
+Capacitance & $C_m$ & pF \\
+Conductance & $g_L$ & nS \\
+Resistance & $R = 1/g_L$ & G$\Omega$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{keybox}[Why this works]
+$1\,\text{nS} \times 1\,\text{mV} = 1\,\text{pA}$, and $1\,\text{pF} \times 1\,\text{mV/ms} = 1\,\text{pA}$. So an equation like $C_m \dot v = -g_L(v-v_{rest}) + I$ needs no unit-conversion constants when everything is expressed in these units. This is the same convention used by Brian2 and NEST for these model families.
+\end{keybox}
+
+% =====================================================================
+\section{The Passive (RC) Membrane}
+% =====================================================================
+The baseline model. A neuron's membrane behaves, at minimum, like a resistor and capacitor in parallel: charge leaks out through the resistor while the capacitor smooths sudden changes.
+
+\begin{eqbox}[Passive membrane]
+$$\tau_m \frac{\dd v}{\dd t} = -(v - v_{rest}) + R\,I(t) \qquad\Longleftrightarrow\qquad C_m \frac{\dd v}{\dd t} = -g_L(v - v_{rest}) + I(t)$$
+where $\tau_m = C_m/g_L$ is the \textbf{membrane time constant}.
+\end{eqbox}
+
+\subsection{Step-current response (closed form)}
+For a constant current $I$ switched on at $t=0$ with $v(0)=v_{rest}$:
+$$v(t) = v_{rest} + \frac{I}{g_L}\left(1 - e^{-t/\tau_m}\right)$$
+As $t \to \infty$, $v \to v_{rest} + I/g_L = v_{rest} + IR$ — the steady-state deflection is \emph{linear} in $I$. This is the definition of "passive": no voltage-dependent conductances, so the system is a linear low-pass filter with cutoff set by $\tau_m$.
+
+\begin{keybox}
+There is no threshold and no reset in this model. No matter how large $I$ is, $v(t)$ only asymptotes toward $v_{rest}+IR$ — it never spikes, because nothing in the equation \emph{can} produce a spike. This is the whole pedagogical point of including it: a threshold is not a detail, it's what makes ``firing rate'' a meaningful concept at all.
+\end{keybox}
+
+% =====================================================================
+\section{Leaky Integrate-and-Fire (LIF)}
+% =====================================================================
+Keeps the passive equation exactly as-is, and bolts on the simplest possible spiking rule.
+
+\begin{eqbox}[LIF spiking rule]
+$$v(t) \geq v_{th} \;\Longrightarrow\; \text{spike recorded}, \quad v \leftarrow v_{reset}, \quad \text{then } v \text{ held for } t_{ref}\text{ ms}$$
+\end{eqbox}
+
+\subsection{Rheobase}
+The \textbf{rheobase} is the minimum constant current needed for the neuron to ever reach threshold (i.e., for the steady state to reach $v_{th}$):
+$$I_{rheo} = g_L\,(v_{th} - v_{rest})$$
+Below $I_{rheo}$, the neuron behaves identically to the passive membrane and never spikes. Above it, it fires periodically forever.
+
+\subsection{Analytical F-I curve}
+For $I > I_{rheo}$ (and taking $v_{reset}=v_{rest}$ for simplicity), the time to charge from reset back up to threshold is $\tau_m \ln\!\left(\dfrac{IR}{IR - (v_{th}-v_{rest})}\right)$. Adding the refractory period gives the full inter-spike interval, and its reciprocal is the firing rate:
+\begin{eqbox}[LIF F-I curve]
+$$f(I) = \left[\, t_{ref} + \tau_m \ln\!\left(\frac{IR}{IR - (v_{th}-v_{rest})}\right)\right]^{-1}, \qquad I > I_{rheo}$$
+\end{eqbox}
+
+\begin{keybox}
+As $I \to I_{rheo}^+$, the log term diverges $\Rightarrow$ firing rate $\to 0$ continuously (not a jump). As $I \to \infty$, the log term $\to 0$ and $f(I) \to 1/t_{ref}$ — the \textbf{refractory period sets a hard ceiling} on firing rate, and the curve visibly bends over (saturates) as $I$ grows.
+\end{keybox}
+
+% =====================================================================
+\section{Numerical Integration: Euler vs.\ RK4}
+% =====================================================================
+Every model here is simulated by discretizing $\dot x = f(x,t)$ in time.
+
+\begin{eqbox}[Forward Euler]
+$$x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n)$$
+One derivative evaluation per step. Cheap, and the \textbf{project standard for every network simulation}, at $\Delta t \le 0.1$~ms.
+\end{eqbox}
+
+\begin{eqbox}[Classical 4th-order Runge-Kutta (RK4)]
+$$k_1 = f(x_n),\quad k_2 = f(x_n+\tfrac{\Delta t}{2}k_1),\quad k_3 = f(x_n+\tfrac{\Delta t}{2}k_2),\quad k_4 = f(x_n+\Delta t\,k_3)$$
+$$x_{n+1} = x_n + \frac{\Delta t}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$
+Four derivative evaluations per step $\Rightarrow$ far more accurate at a given $\Delta t$, but $4\times$ the cost. Used \emph{only} as a single-neuron analytical cross-check, never for networks.
+\end{eqbox}
+
+\begin{keybox}[When does the choice actually matter?]
+For \textbf{linear} sub-threshold dynamics (Passive, LIF), Euler at $\Delta t=0.1$~ms already tracks RK4 almost exactly — there is little accuracy left on the table. For \textbf{nonlinear} dynamics (EIF, AdEx), Euler's local error grows faster with $\Delta t$: at coarse steps ($\Delta t \gtrsim 2$~ms) Euler starts \emph{missing spikes} that a fine-grained reference or RK4 still detects. This is exactly why the network simulations (1000 neurons $\times$ tens of thousands of steps) stick to cheap Euler at $\Delta t \le 0.1$~ms, where this error is negligible for every model in this project — while RK4 remains available for precision checks on a single neuron.
+\end{keybox}
+
+% =====================================================================
+\section{Exponential Integrate-and-Fire (EIF)}
+% =====================================================================
+LIF's hard threshold is a modeling convenience, not a mechanism. Real spike initiation is driven by fast, strongly voltage-dependent Na$^+$ channel activation — better approximated by an exponential acceleration than a step function.
+
+\begin{eqbox}[EIF membrane equation]
+$$C_m \frac{\dd v}{\dd t} = -g_L(v - E_L) + g_L \Delta_T \exp\!\left(\frac{v - v_T}{\Delta_T}\right) + I(t)$$
+A spike is registered when $v$ reaches a numerical cutoff $v_{peak}$ (standing in for the true, divergent upstroke); then $v \leftarrow v_{reset}$.
+\end{eqbox}
+
+\subsection{The role of \texorpdfstring{$\Delta_T$}{Delta\_T} (threshold slope factor)}
+\begin{itemize}[itemsep=2pt]
+  \item $\Delta_T \to 0$: the exponential term becomes a step at $v_T$ $\Rightarrow$ recovers something close to LIF's hard threshold.
+  \item Larger $\Delta_T$: softer, more gradual spike initiation, more visible ``upstroke curvature'' before the peak.
+\end{itemize}
+
+\begin{keybox}
+Because the exponential term is nonzero even \emph{below} $v_T$, it already contributes a small depolarizing boost pre-threshold. For matched $v_T = v_{th}$, this means \textbf{EIF's effective rheobase is lower than LIF's} — it takes less current to destabilize the resting state once the nonlinearity is doing some of the work.
+\end{keybox}
+
+\subsection{Type I excitability}
+Both LIF and EIF exhibit \textbf{Type I excitability}: the F-I curve rises continuously from zero at rheobase (no discontinuous jump to a nonzero rate), and the latency to the first spike \textbf{diverges} as $I \to I_{rheo}^+$ — a signature of ``critical slowing down'' near the bifurcation that creates repetitive firing (see \S7).
+
+% =====================================================================
+\section{AdEx: Adaptive Exponential Integrate-and-Fire}
+% =====================================================================
+Neither LIF nor EIF can reproduce something real cortical neurons do constantly: \emph{change their firing rate over the course of a single, constant-current step} (spike-frequency adaptation), or fire in tight bursts. Both require a second state variable — a slow current, $w$, that builds with spiking and feeds back onto $v$.
+
+\begin{eqbox}[AdEx coupled equations]
+$$C_m \frac{\dd v}{\dd t} = -g_L(v - E_L) + g_L \Delta_T \exp\!\left(\frac{v - v_T}{\Delta_T}\right) - w + I(t)$$
+$$\tau_w \frac{\dd w}{\dd t} = a(v - E_L) - w + b\,\tau_w \sum_f \delta(t - t^f)$$
+On each spike ($v \to v_{peak}$): $\quad v \leftarrow v_{reset}, \qquad w \leftarrow w + b$
+\end{eqbox}
+
+\begin{defbox}[Reading the $\delta$-function term]
+$b\,\tau_w\sum_f \delta(t-t^f)$ means exactly what it looks like once you integrate it: at every spike time $t^f$, $w$ receives an \textbf{instantaneous jump of size $b$}. Between spikes, that term is simply absent, and $w$ relaxes toward $a(v - E_L)$ with time constant $\tau_w$. It is \emph{not} a smoothed or filtered approximation — implementations should apply the jump directly.
+\end{defbox}
+
+\subsection{What each parameter controls}
+\begin{center}
+\begin{tabular}{@{}p{1.6cm}p{2.6cm}p{9.5cm}@{}}
+\toprule
+\textbf{Param.} & \textbf{Unit} & \textbf{Role} \\
+\midrule
+$a$ & nS & \emph{Subthreshold} coupling: how strongly $w$ tracks $v$ even without spiking. Negative $a$ (facilitation) is what enables bursting. \\
+$b$ & pA & \emph{Spike-triggered} increment to $w$. Larger $b$ = stronger adaptation per spike. \\
+$\tau_w$ & ms & Adaptation decay time constant. Small $\tau_w$ = fast recovery between spikes (can allow early bursts); large $\tau_w$ = adaptation lingers, suppressing rate for a long time. \\
+$v_{reset}$ & mV & Where $v$ lands after a spike. If close to/above $v_T$, the exponential term is still active post-reset, enabling rapid re-firing (bursts) before $w$ catches up. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Four regimes, one model}
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Regime} & $a$ (nS) & $b$ (pA) & $\tau_w$ (ms) & $v_{reset}$ (mV) \\
+\midrule
+Tonic spiking & 0 & 0 & 100 & $-58$ \\
+Adapting & 0 & 60 & 200 & $-58$ \\
+Initial burst & 0 & 120 & 50 & $-46$ \\
+Regular bursting & $-5$ & 100 & 100 & $-46$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{keybox}[Spike-frequency adaptation, quantitatively]
+Because AdEx's rate \emph{changes during a trial}, define two F-I curves: the \textbf{instantaneous} rate (from the first ISI, before $w$ has built up) and the \textbf{steady-state} rate (from late ISIs, after $w$ equilibrates). The gap between these two curves, as a function of $I$, \emph{is} spike-frequency adaptation, made visible. LIF has no such gap — its ISIs are constant under constant current.
+\end{keybox}
+
+% =====================================================================
+\section{Phase-Plane Analysis}
+% =====================================================================
+The $(v,w)$ phase plane explains \emph{why} the regimes above emerge, geometrically, rather than treating them as arbitrary parameter luck.
+
+\begin{defbox}[Nullclines]
+The \textbf{v-nullcline} ($\dot v = 0$) and \textbf{w-nullcline} ($\dot w = 0$):
+$$w = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} + I \qquad\text{(v-nullcline)}$$
+$$w = a(v - E_L) \qquad\text{(w-nullcline; a straight line through } (E_L, 0) \text{ with slope } a\text{)}$$
+\end{defbox}
+
+\begin{defbox}[Fixed point]
+Any $(v,w)$ where \emph{both} nullclines cross: $\dot v = \dot w = 0$ simultaneously. If the trajectory ever sat exactly there, it would stay forever. Away from fixed points, the trajectory flows according to the two derivative equations.
+\end{defbox}
+
+\subsection{The mechanism behind spike onset}
+At $I=0$, the system typically has \textbf{two} fixed points: a stable one near $E_L$ (rest) and an unstable one further along the $v$-axis (a genuine, geometric threshold — start to its right and the trajectory is pushed toward a spike rather than settling). As $I$ increases, the v-nullcline shifts upward and the two fixed points slide toward each other, until at some critical current they \textbf{collide and annihilate} (a \emph{saddle-node bifurcation}). With no fixed point left to rest at, the trajectory has no choice but to cycle indefinitely: repetitive spiking.
+
+\begin{keybox}
+This is \emph{why} a rheobase exists at all, for both EIF and AdEx — it's the current at which the stable fixed point disappears. AdEx's second dimension ($w$) is what lets this same basic mechanism support adaptation and bursting: the $w$-nullcline's slope ($a$) and the reset location relative to the nullclines determine whether the post-spike trajectory lands somewhere that quickly finds a new near-fixed-point (tonic spiking), drifts further away each cycle (adaptation), or periodically re-approaches and escapes a transient fixed point (bursting).
+\end{keybox}
+
+% =====================================================================
+\section{Synaptic Dynamics}
+% =====================================================================
+\subsection{Exponential synapse}
+\begin{eqbox}[Exponential kernel]
+$$\tau_{syn}\frac{\dd g}{\dd t} = -g, \qquad g \leftarrow g + w_{syn} \text{ on each incoming spike}$$
+Closed-form response to a single impulse at $t=0$: $g(t) = w_{syn}\,e^{-t/\tau_{syn}}$.
+\end{eqbox}
+
+\subsection{Alpha synapse}
+A smoother rise-and-decay kernel, built from two coupled linear ODEs (both with the same $\tau$):
+$$\frac{\dd x}{\dd t} = -\frac{x}{\tau} \quad (x \leftarrow x + w_{syn}\text{ per spike}), \qquad \frac{\dd g}{\dd t} = \frac{x - g}{\tau}$$
+The resulting $g(t)$ peaks at exactly $t=\tau$ after an isolated input spike (Rall's alpha function).
+
+\subsection{Poisson background input}
+\begin{defbox}[Bernoulli-per-bin approximation]
+At each timestep $\Delta t$ (ms), a source with rate $R$ (Hz) spikes independently with probability
+$$p_{spike} = \frac{R\cdot\Delta t}{1000}$$
+This is an excellent approximation to a true Poisson process whenever $R\Delta t \ll 1000$ — comfortably true at $\Delta t \le 0.1$~ms for any biologically plausible rate.
+\end{defbox}
+
+\begin{keybox}[Shot-noise statistics — why this matters for network tuning]
+Filtering a Poisson spike train (rate $R$, in spikes/ms) through an exponential synapse (weight $w$, decay $\tau$) produces a current with
+$$\text{mean} = R\,w\,\tau, \qquad \text{variance} \approx \frac{R\,w^2\,\tau}{2}$$
+For a \emph{fixed mean}, increasing $w$ while decreasing $R$ proportionally \textbf{increases the variance} (fewer, larger events = more fluctuation). This is the knob that separates \textbf{mean-driven} firing (large mean current, pushes steadily over threshold, fairly regular ISIs) from \textbf{fluctuation-driven} firing (mean held below rheobase, but variance large enough that fluctuations occasionally cross threshold — irregular ISIs, CV closer to 1). The balanced network relies on being in the fluctuation-driven regime.
+\end{keybox}
+
+% =====================================================================
+\section{Balanced Recurrent Networks}
+% =====================================================================
+Scaling from one neuron to $N$ (here, 1000) sparsely-connected LIF neurons.
+
+\begin{defbox}[Dale's law]
+Each neuron's \emph{outgoing} synaptic weights are either all excitatory (positive) or all inhibitory (negative) — never mixed, matching the biological constraint that a real neuron releases one neurotransmitter type. In this project, the first 80\% of neuron indices are excitatory, the remaining 20\% inhibitory.
+\end{defbox}
+
+\subsection{Network construction}
+\begin{itemize}[itemsep=2pt]
+  \item Connection probability $p$: any ordered pair $(i,j)$ is connected with probability $p$, independently $\Rightarrow$ mean in-degree $\approx N\!\cdot\!p$, approximately binomially distributed.
+  \item Inhibitory weights scaled: $w_{inh} = -g \cdot w_{exc}$, with $g$ typically $\gg 1$ (e.g., $g=5$) — inhibition needs to be \emph{stronger, not just present}, per connection.
+  \item Every neuron also receives independent Poisson background drive (\S8.3) — without it, a sparsely-connected, purely leaky network would simply stay silent forever.
+\end{itemize}
+
+\subsection{The Asynchronous-Irregular (AI) regime}
+\begin{defbox}[AI regime — three signatures]
+\begin{enumerate}[itemsep=2pt, leftmargin=1.4em]
+  \item \textbf{Asynchronous}: no shared population-wide rhythm; raster plot shows no vertical stripes/bursts; population rate trace is flat, not oscillatory.
+  \item \textbf{Irregular}: individual spike trains resemble a memoryless (Poisson) process. Measured via the \textbf{ISI coefficient of variation}:
+  $$CV = \frac{\text{std}(\text{ISIs})}{\text{mean}(\text{ISIs})}, \qquad CV\approx 0 \text{ (clock-like)}, \; CV\approx 1 \text{ (Poisson-like)}, \; CV>1 \text{ (bursty)}$$
+  \item \textbf{Stable, low rate}: mean population rate settles to a low value and stays there, rather than diverging (runaway excitation) or vanishing (net inhibition dominates completely).
+\end{enumerate}
+\end{defbox}
+
+\subsection{Population rate}
+Binning all spikes network-wide into windows of width $\Delta_{bin}$ (seconds):
+$$r(t) = \frac{\text{spike count in bin}}{N \cdot \Delta_{bin}} \quad \text{[Hz]}$$
+
+\subsection{Why ``balanced''? The mechanism, not just the name}
+\begin{keybox}
+With \textbf{weak} inhibition (small $g$), increasing excitatory weight directly raises the population rate — recurrent excitation amplifies itself largely unchecked (approaching runaway/mean-driven behavior). With \textbf{strong} inhibition (large $g$), the population rate becomes largely \emph{insensitive} to further increases in excitatory weight: inhibition tracks and cancels the extra excitatory drive almost as fast as it arrives. That insensitivity — not any particular numerical rate — is the actual definition of ``balance,'' and it's what keeps the net input to each neuron fluctuation-dominated (small, noisy net current) rather than mean-dominated (large, steady net current), which is in turn what produces the irregular, asynchronous firing described above.
+\end{keybox}
+
+% =====================================================================
+\newpage
+\section{Quick-Reference Formula Sheet}
+% =====================================================================
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{@{}p{3.6cm}p{12.5cm}@{}}
+\toprule
+\textbf{Concept} & \textbf{Formula} \\
+\midrule
+\endhead
+Passive membrane & $\tau_m \dot v = -(v-v_{rest}) + RI(t)$, \quad $\tau_m = C_m/g_L$ \\
+Passive step response & $v(t) = v_{rest} + \dfrac{I}{g_L}\left(1-e^{-t/\tau_m}\right)$ \\
+LIF rule & $v\!\ge\! v_{th} \Rightarrow v\!\leftarrow\! v_{reset}$, refractory $t_{ref}$ \\
+LIF rheobase & $I_{rheo} = g_L(v_{th}-v_{rest})$ \\
+LIF F-I curve & $f(I) = \left[t_{ref} + \tau_m \ln\!\frac{IR}{IR-(v_{th}-v_{rest})}\right]^{-1}$ \\
+EIF & $C_m \dot v = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} + I$ \\
+AdEx ($v$) & $C_m \dot v = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} - w + I$ \\
+AdEx ($w$) & $\tau_w \dot w = a(v-E_L) - w + b\tau_w\sum_f \delta(t-t^f)$ \\
+AdEx spike reset & $v\!\leftarrow\! v_{reset}$, \quad $w \leftarrow w + b$ \\
+v-nullcline & $w = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} + I$ \\
+w-nullcline & $w = a(v-E_L)$ \\
+Euler step & $x_{n+1} = x_n + \Delta t\, f(x_n)$ \\
+RK4 step & $x_{n+1} = x_n + \frac{\Delta t}{6}(k_1+2k_2+2k_3+k_4)$ \\
+Exponential synapse & $\tau_{syn}\dot g = -g$, \; $g \leftarrow g+w_{syn}$ per spike \\
+Alpha synapse & $\dot x = -x/\tau$ (jump $w_{syn}$ per spike), \; $\dot g = (x-g)/\tau$ \\
+Poisson bin probability & $p_{spike} = R\Delta t / 1000$ \\
+Shot-noise mean/variance & mean $=Rw\tau$, \; variance $\approx Rw^2\tau/2$ \\
+ISI coefficient of variation & $CV = \text{std(ISI)}/\text{mean(ISI)}$ \\
+Population rate & $r(t) = \dfrac{\text{spikes in bin}}{N\cdot\Delta_{bin}\text{[s]}}$ \\
+Dale's law weight scaling & $w_{inh} = -g\cdot w_{exc}$, \; $g \gg 1$ for balance \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+	\newpage
+% =====================================================================
+\section{Self-Test Questions}
+% =====================================================================
+\begin{enumerate}[itemsep=4pt, leftmargin=1.6em]
+  \item Why can a passive membrane never produce a spike, regardless of input current magnitude?
+  \item Derive (or explain in words) why the LIF F-I curve's firing rate approaches $1/t_{ref}$ as $I \to \infty$.
+  \item Why does EIF have a \emph{lower} rheobase than an LIF neuron with the same $v_T = v_{th}$?
+  \item What does $\Delta_T \to 0$ do to the EIF model, intuitively?
+  \item Write out what the term $b\,\tau_w\sum_f \delta(t-t^f)$ actually does to $w$ at a spike time — in one sentence, without integral notation.
+  \item Why does AdEx need \emph{two} state variables to produce bursting, when LIF/EIF (one variable) cannot?
+  \item In the $(v,w)$ phase plane, what does it mean, geometrically, for a neuron to be at rest? What happens as input current pushes the system toward its rheobase?
+  \item What is the difference between the "instantaneous" and "steady-state" F-I curve, and why does only AdEx (not LIF) have a gap between them?
+  \item Why does a Poisson background source need a nonzero rate \emph{and} a large enough synaptic weight to actually drive spiking, rather than just a high rate alone?
+  \item Explain, in terms of mean vs.\ variance of shot noise, the difference between a "mean-driven" and a "fluctuation-driven" spiking regime.
+  \item What does Dale's law constrain, specifically, in the connectivity matrix $W$?
+  \item Why is the Asynchronous-Irregular regime described as an \emph{emergent network property} rather than a property of any single neuron?
+  \item If you doubled every excitatory weight in a balanced network \emph{without} increasing inhibition to match, what would you expect to happen to the population rate? What if inhibition were already very strong before you doubled excitation?
+  \item Why does this project use Euler for every network simulation but keep RK4 available only for single neurons?
+\end{enumerate}
+
+	\newpage
+\vspace{0.3cm}
+\begin{center}\rule{0.4\textwidth}{0.4pt}\end{center}
+\subsection*{Answers (brief)}
+{\small
+\begin{enumerate}[itemsep=2pt, leftmargin=1.6em]
+  \item There is no threshold/reset rule in the model at all — $v$ only asymptotes toward $v_{rest}+IR$; nothing triggers a spike event no matter how high that asymptote is.
+  \item As $I\to\infty$, the charging time from reset to threshold $\to 0$ (the log term vanishes), leaving only the refractory period between spikes, so $f \to 1/t_{ref}$.
+  \item The exponential current is already nonzero (and depolarizing) below $v_T$, effectively pre-loading some of the work a hard threshold would otherwise require more current to do.
+  \item It sharpens the exponential term into something close to a step at $v_T$, making EIF behave increasingly like LIF.
+  \item At each spike, $w$ jumps up instantly by exactly $b$; between spikes, that term contributes nothing and $w$ just relaxes toward $a(v-E_L)$.
+  \item A single variable resets to the same state after every spike, so every inter-spike interval under constant input would look identical; $w$ carries memory of recent spiking across intervals, letting successive ISIs differ (lengthen, shorten, or cluster).
+  \item Rest = sitting at a stable fixed point (both nullclines cross, flow points inward). As $I$ rises, the v-nullcline shifts and the stable/unstable fixed-point pair merges and vanishes (saddle-node bifurcation) — with nowhere to rest, the system is forced into a repetitive spiking limit cycle.
+  \item Instantaneous = rate from the very first ISI (before $w$ has built up); steady-state = rate from late ISIs (after $w$ has equilibrated). LIF has no adaptation variable, so its rate never changes within a trial — no gap.
+  \item Rate alone sets how \emph{often} impulses arrive; weight sets how \emph{large} each one is. A high rate of vanishingly small impulses can still average out to zero net depolarization if the weight is too small to matter individually or in sum relative to threshold.
+  \item Mean-driven: the average current alone is enough to push $v$ steadily up to threshold nearly every cycle $\Rightarrow$ fairly regular ISIs. Fluctuation-driven: the mean sits below threshold, and only the random fluctuations (variance) occasionally push $v$ over $\Rightarrow$ irregular, Poisson-like ISIs.
+  \item Every \emph{column} of $W$ (one presynaptic neuron's outgoing weights) must be entirely $\ge 0$ (excitatory source) or entirely $\le 0$ (inhibitory source) — never a mix of signs within one column.
+  \item No single LIF neuron in the network does anything qualitatively different from an isolated LIF neuron under noisy current injection — the asynchronous, irregular, stable-rate \emph{population} behavior only exists because of how 1000 of them are wired together (Dale's law + sparse connectivity + inhibition scaled above excitation).
+  \item Weak inhibition to begin with: rate rises noticeably (amplification). Already-strong inhibition: rate stays roughly the same — inhibition absorbs the extra drive, which is exactly the balance mechanism.
+  \item Networks simulate many neurons over many timesteps, where Euler's cost (1 derivative evaluation/step) is what makes the simulation tractable at all; RK4's $4\times$ cost is only worth paying when precisely validating one neuron's trajectory against a reference.
+\end{enumerate}
+}
+	\newpage
+% =====================================================================
+\section{Glossary}
+% =====================================================================
+\begin{description}[style=nextline, leftmargin=1.2em, itemsep=3pt]
+  \item[Rheobase] Minimum constant current for sustained/eventual firing.
+  \item[Refractory period ($t_{ref}$)] Time after a spike during which the neuron cannot fire again; sets the maximum possible firing rate to $1/t_{ref}$.
+  \item[Nullcline] The curve in a phase plane along which one state variable's derivative is zero.
+  \item[Fixed point] A point where \emph{every} state variable's derivative is zero simultaneously.
+  \item[Bifurcation] A qualitative change in a dynamical system's behavior (e.g., number of fixed points) as a parameter crosses a critical value.
+  \item[Saddle-node bifurcation] Two fixed points (one stable, one unstable) collide and annihilate as a parameter changes — the mechanism behind spike onset in EIF/AdEx.
+  \item[Type I excitability] Firing rate rises continuously from zero at rheobase (as opposed to Type II, which jumps to a nonzero rate).
+  \item[Spike-frequency adaptation (SFA)] Progressive lengthening of ISIs over a spike train under constant input.
+  \item[Dale's law] A neuron's outgoing synapses are either all-excitatory or all-inhibitory, never mixed.
+  \item[Coefficient of variation (CV)] std/mean of inter-spike intervals; a standard irregularity measure.
+  \item[Asynchronous-Irregular (AI) regime] Network state with no shared rhythm, individually irregular spiking, and a stable low mean rate.
+  \item[Mean-driven vs.\ fluctuation-driven] Whether spiking is caused mainly by the average input current crossing threshold, or by noise/variance occasionally pushing a subthreshold-on-average current over threshold.
+  \item[Shot noise] The current fluctuations produced by filtering a discrete (Poisson) spike train through a continuous synaptic kernel.
+\end{description}
+
+\end{document}
