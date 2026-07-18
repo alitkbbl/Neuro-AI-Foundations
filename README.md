@@ -48,7 +48,7 @@ The goal of `Neuro-AI-Foundations` is to provide a clean, rigorous software foun
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/alitkbble/Neuro-AI-Foundations.git
+git clone https://github.com/alitkbbl/Neuro-AI-Foundations.git
 cd Neuro-AI-Foundations
 ```
 
@@ -56,7 +56,6 @@ cd Neuro-AI-Foundations
 Using an isolated environment ensures dependency versions do not conflict with your other projects.
 
 ```bash
-# Create the virtual environment
 python3 -m venv .venv
 
 # Activate on Linux / macOS:
@@ -68,7 +67,6 @@ source .venv/bin/activate
 
 **3. Install dependencies:**
 ```bash
-# Upgrade pip to avoid installation issues with scientific packages
 python -m pip install --upgrade pip
 
 # Install the required packages
@@ -100,26 +98,25 @@ The LIF model is the simplest spiking neuron model, treating the cell membrane a
 
 *   **Key Features:** Linear subthreshold dynamics, fixed spike threshold, computationally cheap.
 *   **Subthreshold Equation:**
-    $$ \tau_m \frac{dv}{dt} = -(v - E_L) + R\,I(t) $$
-    *Where $ \tau_m $ is the membrane time constant, $ E_L $ is the leak reversal potential (resting potential), $ R $ is membrane resistance, and $ I(t) $ is the input current.*
-*   **Spiking Mechanism:** When $ v \ge v_{th} $, a spike is emitted, and the voltage is reset to $ v_{reset} $.
+    $$\tau_m \frac{dv}{dt} = -(v - E_L) + R\,I(t)$$
+    *Where $\tau_m$ is the membrane time constant, $E_L$ is the leak reversal potential (resting potential), $R$ is membrane resistance, and $I(t)$ is the input current.*
+*   **Spiking Mechanism:** When $v \ge v_{th}$, a spike is emitted, and the voltage is reset to $v_{reset}$.
 
 ### 2. Adaptive Exponential Integrate-and-Fire (AdEx)
 The AdEx model extends the LIF model by adding an exponential voltage dependence for spike generation and a second variable for adaptation. It can reproduce a wide variety of physiological firing patterns (e.g., bursting, tonic spiking, adaptation).
 
 *   **Key Features:** Realistic spike initiation (exponential), spike-frequency adaptation, subthreshold resonance.
 *   **Voltage Dynamics:**
-    $$ C_m \frac{dv}{dt} = -g_L (v - E_L) + g_L \Delta_T \exp\!\left(\frac{v - v_T}{\Delta_T}\right) - w + I(t) $$
+    $$C_m \frac{dv}{dt} = -g_L (v - E_L) + g_L \Delta_T \exp\left(\frac{v - v_T}{\Delta_T}\right) - w + I(t)$$
 *   **Adaptation Dynamics:**
-    $$ \tau_w \frac{dw}{dt} = a(v - E_L) - w + b\,\tau_w \sum_f \delta(t - t^f) $$
-    *Where $ C_m $ is membrane capacitance, $ g_L $ is leak conductance, $ \Delta_T $ is the slope factor, $ v_T $ is the threshold potential, $ w $ is the adaptation current, and $ a $ and $ b $ govern subthreshold and spike-triggered adaptation, respectively. The Dirac delta function $ \delta(t - t^f) $ models the step increase in $ w $ at each spike time $ t^f $.*
+    $$\tau_w \frac{dw}{dt} = a(v - E_L) - w + b\,\tau_w \sum_f \delta(t - t^f)$$
+    *Where $C_m$ is membrane capacitance, $g_L$ is leak conductance, $\Delta_T$ is the slope factor, $v_T$ is the threshold potential, $w$ is the adaptation current, and $a$ and $b$ govern subthreshold and spike-triggered adaptation, respectively. The Dirac delta function $\delta(t - t^f)$ models the step increase in $w$ at each spike time $t^f$.*
 
 ### 3. Balanced Networks (Excitatory-Inhibitory Balance)
 Moving from single neurons to network-level dynamics, this repository implements sparsely connected, random networks of E (Excitatory) and I (Inhibitory) neurons.
 
 *   **Key Features:** Asynchronous irregular (AI) firing states, fluctuation-driven spiking, sparse random connectivity.
 *   **Network Dynamics:** Neurons in the network (typically modeled as LIF or AdEx) receive a massive number of inputs. The network enters a "balanced state" where large excitatory inward currents are dynamically canceled by large inhibitory outward currents, leaving only fluctuations (noise) to drive action potentials.
-
 
 ---
 
@@ -140,5 +137,4 @@ That's the payoff of the whole ladder: the neurons doing the work here are the s
 ---
 
 ## ⚖️ License
-
-MIT — see [LICENSE](LICENSE). Educational and research use is warmly encouraged; please cite the primary literature referenced above if this repository informs published work.
+This project is licensed under the MIT License. If you use this code in your research, please use the **"Cite this repository"** widget on the right sidebar to cite this project and refer to the primary literature of the implemented models.
