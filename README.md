@@ -5,29 +5,31 @@
       <img src="assets/banner.png" alt="Project Banner" width="100%">
 </p>
 
+---
 
-## 📌 Motivation & Scope
+### 📌 The Evolutionary Path
 
-Most computational neuroscience courses present the Leaky Integrate-and-Fire (LIF) neuron as the whole story.  
-Most machine learning courses treat “neurons” as stateless dot products.  
-**Neither captures what a spiking neuron really is.**
+Each model is derived directly from its governing differential equation, with complexity added incrementally:
 
-`Neuro-AI-Foundations` closes that gap with a strict conceptual ladder — **one differential equation at a time**:
-
-| Step | Model | What You Add | Spike Behaviour |
-|------|-------|--------------|-----------------|
-| 1 | Passive membrane | RC circuit, no spikes | — |
-| 2 | Leaky I&F (LIF) | Hard threshold | Fixed threshold spike |
-| 3 | Exponential I&F (EIF) | Soft, biophysical onset | Exponential non-linearity |
+| Step | Model | Key Feature | Spike Behaviour |
+|:---:|:---|:---|:---|
+| 1 | Passive Membrane | RC Circuit | None |
+| 2 | Leaky I&F (LIF) | Hard Threshold | Fixed threshold spike |
+| 3 | Exponential I&F (EIF) | Exponential nonlinearity | Biophysical onset |
 | 4 | AdEx | Adaptation current | Bursting & adaptation |
-| 5 | Balanced spiking network | 1000 neurons, Dale’s law, AI regime | Irregular, asynchronous firing |
+| 5 | Balanced Network | Sparse connectivity | Irregular, asynchronous firing |
 
-Every model is:
-- **Derived from its governing equation** – no black boxes.
-- **Implemented in clean, tested, vectorized NumPy** – abstract base classes, unit‑tested dynamics.
-- **Paired with a notebook** that lets you *see* the consequence of each added term: what a hard threshold buys you, why exponential spike onset matters, how adaptation reshapes the F‑I curve, and how 1000 sparsely‑connected leaky neurons self‑organise into the irregular, asynchronous firing regime observed in cortex.
+### Engineering Highlights
 
-> **Computational neuroscience × AI engineering** – the science is textbook‑accurate (Gerstner, Brette & Gerstner, Brunel), and the code is written like production ML infrastructure: abstract base classes, vectorized state updates, unit‑tested dynamics, and reproducible notebooks.
+Designed with production-grade standards to ensure accuracy and scalability:
+
+*   **Vectorized Implementation:** Core dynamics are built with NumPy, optimized for efficient matrix calculations and high-performance simulation.
+*   **Modular Architecture:** Utilizes Abstract Base Classes (ABCs) to define extensible, reusable neuron dynamics.
+*   **Test-Driven Design:** Includes a comprehensive suite of unit tests to validate numerical accuracy and system stability across all models.
+*   **Reproducibility:** Every model is accompanied by detailed Jupyter notebooks, documenting the mathematical derivation and visualizing the resulting dynamics.
+
+### Project Objective
+The goal of `Neuro-AI-Foundations` is to provide a clean, rigorous software foundation for spiking neural simulations. It enables researchers and engineers to focus on mathematical analysis and emergent network behaviors, rather than implementation overhead.
 
 ---
 
