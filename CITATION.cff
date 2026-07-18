@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software or its implementations, please cite it as below. Also, consider citing the foundational papers referenced here."
+title: "Neuro-AI-Foundations"
+authors:
+  - family-names: "TAghizadeh"
+    given-names: "Ali"
+
+version: 1.0.0
+date-released: 2026-07-18
+url: "https://github.com/alitkbbl/Neuro-AI-Foundations"
+repository-code: "https://github.com/alitkbbl/Neuro-AI-Foundations"
+keywords:
+  - computational-neuroscience
+  - spiking-neural-networks
+  - adex-model
+  - balanced-networks
+license: "MIT" 
+
+references:
+  - type: article
+    authors:
+      - family-names: "Brette"
+        given-names: "Romain"
+      - family-names: "Gerstner"
+        given-names: "Wulfram"
+    title: "Adaptive Exponential Integrate-and-Fire Model as an Effective Description of Neuronal Activity"
+    journal: "Journal of Neurophysiology"
+    year: 2005
+    doi: "10.1152/jn.00686.2005"
+    
+  - type: article
+    authors:
+      - family-names: "Brunel"
+        given-names: "Nicolas"
+    title: "Dynamics of Sparsely Connected Networks of Excitatory and Inhibitory Spiking Neurons"
+    journal: "Journal of Computational Neuroscience"
+    year: 2000
+    doi: "10.1023/A:1008925309027"
