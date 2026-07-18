@@ -7,9 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-educational%20%2B%20research--grade-brightgreen.svg)]()
 
----
-
-## Why this repository exists
+## 1. About this project
 
 Most computational neuroscience courses teach the Leaky Integrate-and-Fire (LIF) neuron as if it were the whole story, and most machine learning courses treat "neurons" as stateless dot products. **Neither is a spiking neuron.**
 
@@ -23,26 +21,9 @@ Passive membrane  →  LIF  →  Nonlinear (Exponential) I&F  →  AdEx  →  Ba
 
 Every model is derived from its governing equation, implemented as clean, tested, vectorized NumPy code, and paired with a notebook that lets you **see** the consequence of each added term — what a hard threshold buys you, why exponential spike onset matters, what adaptation currents do to an F-I curve, and how 1000 sparsely-connected leaky neurons self-organize into the irregular, asynchronous firing regime seen in cortex.
 
-This project sits deliberately at the intersection of **computational neuroscience** and **AI engineering practice**: the science is textbook-accurate (Gerstner, Brette & Gerstner, Destexhe), and the code is written the way you'd write production ML infrastructure — abstract base classes, vectorized state updates, unit-tested dynamics, and reproducible notebooks.
+This project sits deliberately at the intersection of **computational neuroscience** and **AI engineering practice**: the science is textbook-accurate (Gerstner, Brette & Gerstner, Brunel), and the code is written the way you'd write production ML infrastructure — abstract base classes, vectorized state updates, unit-tested dynamics, and reproducible notebooks.
 
----
-
-## Scientific scope
-
-| Concept | Where |
-|---|---|
-| RC membrane charging, no spiking | `PassiveNeuron` |
-| Hard-threshold spiking, refractory period, F-I curve | `LIFNeuron` |
-| Exponential spike-onset nonlinearity, rheobase, spike latency | `notebooks/02` |
-| Spike-frequency adaptation, tonic vs. bursting vs. initial-burst regimes | `AdExNeuron` |
-| Nullclines, fixed points, phase-plane geometry of excitability | `notebooks/04` |
-| Synaptic conductance/current kernels (exponential, alpha) | `synapse_models.py` |
-| Dale's law, sparse random connectivity, Poisson background drive | `network_builder.py` |
-| Asynchronous-Irregular (AI) cortical-like dynamics | `notebooks/05` |
-
----
-
-## Repository structure
+### Repository structure
 
 ```
 Neuro-AI-Foundations/
@@ -61,6 +42,7 @@ Neuro-AI-Foundations/
 │   ├── 03_The_Need_for_Adaptation_AdEx.ipynb
 │   ├── 04_Phase_Plane_Analysis.ipynb
 │   └── 05_Balanced_Recurrent_Network.ipynb
+├── assets/                   # chart images referenced from this README
 └── tests/
     ├── test_neuron_models.py
     ├── test_synapse_models.py
@@ -69,7 +51,38 @@ Neuro-AI-Foundations/
 
 ---
 
-## Installation
+## 2. Models used & key features
+
+| Model | Class | Key features |
+|---|---|---|
+| **Passive (RC) membrane** | `PassiveNeuron` | Linear leaky integrator, **no spike mechanism**. Baseline used to show that a threshold — not just leaky integration — is what makes "firing rate" meaningful at all. |
+| **Leaky Integrate-and-Fire** | `LIFNeuron` | Adds a hard voltage threshold, reset, and refractory period on top of the passive equation. Cheap and vectorizable — the workhorse of the 1000-neuron network. |
+| **Exponential I&F (EIF)** | `AdExNeuron` (with `a=0, b=0`) | Replaces the hard threshold with a biophysically-motivated exponential nonlinearity. Produces a genuine spike upstroke, a lower/soft rheobase, and Type I excitability. |
+| **AdEx (Adaptive Exp. I&F)** | `AdExNeuron` | Full model: exponential spike onset **+** a second state variable, the adaptation current `w`, which jumps at every spike and decays between them. Reproduces tonic spiking, spike-frequency adaptation, initial bursting, and regular bursting from the same two equations. |
+| **Synaptic kernels** | `ExponentialSynapse`, `AlphaSynapse` | Convert discrete spike trains into continuous post-synaptic current, recursively updated at every Euler step. |
+| **Background drive** | `PoissonSpikeGenerator` | Vectorized, independent homogeneous Poisson spike sources — used to drive every neuron in the network with realistic background noise. |
+| **Balanced recurrent network** | `NeuronPopulation`, `SparseConnectivity`, `BalancedNetwork` | 1000 LIF neurons, 80% excitatory / 20% inhibitory, **Dale's law enforced**, sparse random connectivity, inhibition scaled well above excitation. Reproduces the cortex-like Asynchronous-Irregular (AI) firing regime. |
+
+**Implementation features common to all models:**
+- **Object-oriented core, vectorized execution.** `BaseNeuron` defines a common interface (`step`, `simulate`, `f_i_curve`) so every model is a drop-in replacement for any other. The 1000-neuron network is NumPy arrays updated in bulk, not 1000 Python objects in a loop.
+- **Euler by default, RK4 for validation.** Every network simulation uses forward Euler at dt ≤ 0.1ms — the project standard. `BaseNeuron` additionally offers an optional 4th-order Runge-Kutta integrator, provided purely as a single-neuron analytical cross-check (see Notebook 01 and 02).
+- **Tested dynamics, not just tested syntax.** 45 unit tests check actual dynamical properties: analytical steady states, monotonic F-I curves, Dale's-law sign constraints, spike-triggered adaptation, and network stability.
+
+---
+
+## 3. Notebooks
+
+| Notebook | What it covers |
+|---|---|
+| [`01_Passive_and_LIF.ipynb`](notebooks/01_Passive_and_LIF.ipynb) | Builds the passive membrane and LIF neuron, derives the F-I curve, shows how the refractory period caps it, and validates Euler against RK4 for LIF's linear dynamics. Ends by driving a LIF neuron with a realistic Poisson-filtered synaptic current instead of a step. |
+| [`02_Non_Linear_Integrate_and_Fire.ipynb`](notebooks/02_Non_Linear_Integrate_and_Fire.ipynb) | Introduces the exponential (EIF) nonlinearity, compares it directly against LIF's hard threshold (voltage trajectories, rheobase, F-I curves, spike latency), and revisits Euler vs. RK4 — this time for genuinely nonlinear dynamics, where the choice of integrator actually matters. |
+| [`03_The_Need_for_Adaptation_AdEx.ipynb`](notebooks/03_The_Need_for_Adaptation_AdEx.ipynb) | Switches on the AdEx adaptation current `w`, visualizes spike-frequency adaptation directly (instantaneous vs. steady-state F-I curves), and shows a gallery of four qualitatively different firing patterns from the same two equations. |
+| [`04_Phase_Plane_Analysis.ipynb`](notebooks/04_Phase_Plane_Analysis.ipynb) | Explains *why* those firing patterns emerge, geometrically, via the `(v, w)` phase plane and its nullclines/fixed points. Includes a live `ipywidgets` explorer — drag `a`, `b`, `τ_w`, `v_reset`, and `I` and watch the nullclines and firing pattern shift in real time. |
+| [`05_Balanced_Recurrent_Network.ipynb`](notebooks/05_Balanced_Recurrent_Network.ipynb) | Scales up to a 1000-neuron recurrent LIF network with Dale's law and Poisson background drive, and demonstrates the Asynchronous-Irregular (AI) regime with raster plots, population rate, ISI-CV statistics, and a direct empirical test of the excitation/inhibition balance mechanism. |
+
+---
+
+## 4. Installation
 
 ```bash
 git clone https://github.com/<your-username>/Neuro-AI-Foundations.git
@@ -90,15 +103,15 @@ pytest tests/ -v
 
 ---
 
-## The models, briefly
+## 5. The models, briefly
 
-### 1. Passive (RC) neuron — the baseline
+### Passive (RC) neuron — the baseline
 
 $$\tau_m \frac{dv}{dt} = -(v - v_{rest}) + R\,I(t)$$
 
 A pure leaky integrator. No threshold, no spike, no reset. It exists to demonstrate *why* a threshold is needed at all — without one, "firing rate" has no meaning, only a graded, low-pass-filtered voltage.
 
-### 2. Leaky Integrate-and-Fire (LIF)
+### Leaky Integrate-and-Fire (LIF)
 
 Same subthreshold equation as the passive neuron, plus a hard rule:
 
@@ -106,7 +119,7 @@ $$v(t) \geq v_{th} \implies v \leftarrow v_{reset}, \quad \text{spike recorded},
 
 This is the workhorse of large-scale spiking network simulation because it is cheap, and it already produces a well-behaved, saturating F-I curve.
 
-### 3. AdEx — Adaptive Exponential Integrate-and-Fire
+### AdEx — Adaptive Exponential Integrate-and-Fire
 
 AdEx replaces the hard threshold with an **exponential nonlinearity** (biophysically closer to Hodgkin–Huxley sodium activation) and couples it to a slow **adaptation current** `w`:
 
@@ -116,31 +129,36 @@ $$\tau_w \frac{dw}{dt} = a(v - v_{rest}) - w + b\,\tau_w \sum_f \delta(t - t^f)$
 
 On each spike ($v \to v_{peak}$): $v \leftarrow v_{reset}$ and $w \leftarrow w + b$ (the delta-function sum above is implemented exactly this way — an instantaneous jump in `w` at each spike time, not a smoothed approximation). Depending on just four parameters ($a$, $b$, $\tau_w$, $v_{reset}$), AdEx reproduces essentially every qualitative firing pattern seen in cortex: tonic spiking, spike-frequency adaptation, initial bursting, regular bursting, and irregular firing. Notebook 04 lets you feel this out interactively.
 
-### 4. Synapses
+### Synapses
 
 Post-synaptic currents/conductances are generated by kernel filters applied to incoming spike trains — `ExponentialSynapse` (single decay time constant, computed with an efficient recursive update) and `AlphaSynapse` (rise-and-decay). `PoissonSpikeGenerator` produces homogeneous Poisson background spike trains used to drive the balanced network.
 
-### 5. Balanced recurrent network
+### Balanced recurrent network
 
 1000 LIF neurons, 80% excitatory / 20% inhibitory (**Dale's law enforced** — a neuron's outgoing weights are all excitatory or all inhibitory, never mixed), sparse random connectivity, and inhibitory synaptic weights scaled well above excitatory ones. Driven by independent Poisson background input to every cell. The result — reproduced in Notebook 05 with raster plots and population-rate traces — is the **Asynchronous-Irregular (AI)** regime characteristic of cortical microcircuits: low pairwise correlation, high single-neuron CV of inter-spike intervals, and a stable, low mean population rate, despite (and because of) strong recurrent excitation and inhibition fighting each other into balance.
 
 ---
 
-## Design principles
+## 6. Main results
 
-- **Object-oriented core, vectorized execution.** `BaseNeuron` defines a common interface (`step`, `simulate`, `f_i_curve`) so every model is a drop-in replacement for any other in a notebook or a network. The 1000-neuron network is *not* 1000 Python objects in a loop — state is held in NumPy arrays and updated with vectorized operations, because that is what makes a 1000-neuron, 10,000-timestep simulation run in seconds rather than minutes.
-- **Euler by default, RK4 for validation.** Every network simulation uses forward Euler at $dt \leq 0.1\,\text{ms}$ — the standard choice in the field for spiking network models, since spike-timing precision at that resolution is more than sufficient and the constant-time-step vectorized update is what makes networks tractable. `BaseNeuron` additionally offers a 4th-order Runge-Kutta integrator, provided purely as an *analytical cross-check* for single-neuron trajectories (it should never be used for a spiking network — see the docstring).
-- **Tested dynamics, not just tested syntax.** The test suite checks actual dynamical properties: the passive neuron converges to its analytical steady state, the LIF F-I curve is monotonic and has a correct rheobase, AdEx reproduces spike-frequency adaptation (increasing ISIs), and the balanced network is stable (does not diverge or fully silence).
+The primary objective of this project is to show that everything culminates in a **genuinely emergent, network-level phenomenon** — one that no single neuron in the simulation, however sophisticated, produces on its own.
+
+Running the default 1000-neuron network in `05_Balanced_Recurrent_Network.ipynb` (800 excitatory / 200 inhibitory, 10% connection probability, inhibition scaled 5x above excitation) produces:
+
+- A **scattered, non-synchronized raster** — no visible stripes or population-wide bursts — with a population firing rate that fluctuates around a stable mean (~3 Hz here) rather than oscillating or diverging.
+- Individually **irregular** spike trains: a mean ISI coefficient of variation around 0.5, well above the near-zero CV of a clock-like or purely mean-driven neuron, though below the CV = 1 of a strictly memoryless Poisson process.
+- A direct demonstration that this stability is a **balance** effect, not a weak-input effect: sweeping the inhibitory scaling factor `g` shows the population rate rising with excitatory strength when inhibition is weak, and becoming largely *insensitive* to excitatory strength once inhibition is strong enough to track and cancel it.
+
+That's the payoff of the whole ladder: the neurons doing the work here are the simplest model in the entire project (plain LIF, no adaptation, no nonlinearity) — the richness comes entirely from Dale's law, sparse recurrent connectivity, and the excitation/inhibition balance, at scale.
+
+<!-- 📊 Paste your chart from 05_Balanced_Recurrent_Network.ipynb below.
+     Save the exported image to assets/ (e.g. assets/balanced_network_result.png)
+     and update the path in the line below. -->
+
+![Balanced network raster and population rate](assets/balanced_network_result.png)
 
 ---
 
-## References
-
-- Gerstner, W., Kistler, W. M., Naud, R., & Paninski, L. (2014). *Neuronal Dynamics*. Cambridge University Press. [Free online](https://neuronaldynamics.epfl.ch/)
-- Brette, R., & Gerstner, W. (2005). Adaptive Exponential Integrate-and-Fire Model as an Effective Description of Neuronal Activity. *Journal of Neurophysiology*, 94(5).
-- Brunel, N. (2000). Dynamics of Sparsely Connected Networks of Excitatory and Inhibitory Spiking Neurons. *Journal of Computational Neuroscience*, 8(3).
-- Destexhe, A., Rudolph, M., & Paré, D. (2003). The high-conductance state of neocortical neurons in vivo. *Nature Reviews Neuroscience*, 4(9).
-
 ## License
 
-MIT — see `LICENSE`. Educational and research use is warmly encouraged; please cite the primary literature above if this repository informs published work.
+MIT — see [LICENSE](LICENSE). Educational and research use is warmly encouraged; please cite the primary literature referenced above if this repository informs published work.
