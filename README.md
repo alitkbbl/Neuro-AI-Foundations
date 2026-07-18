@@ -6,6 +6,7 @@
 
 ---
 
+
 ### 📌 The Evolutionary Path
 
 Each model is derived directly from its governing differential equation, with complexity added incrementally to bridge the gap between biological realism and computational efficiency:
