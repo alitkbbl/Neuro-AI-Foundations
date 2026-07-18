@@ -684,41 +684,6 @@ $$r(t) = \frac{\text{تعداد اسپایک در پنجره}}{N \cdot \Delta_{b
 	و همین وضعیت است که شلیک نامنظم و ناهمگام توضیح‌داده‌شده در بالا را تولید می‌کند.
 \end{keybox}
 
-% =====================================================================
-\newpage
-\section{Quick-Reference Formula Sheet}
-% =====================================================================
-\begin{center}
-	\renewcommand{\arraystretch}{1.35}
-	\begin{longtable}{@{}p{3.6cm}p{12.5cm}@{}}
-		\toprule
-		\textbf{Concept} & \textbf{Formula} \\
-		\midrule
-		\endhead
-		Passive membrane & $\tau_m \dot v = -(v-v_{rest}) + RI(t)$, \quad $\tau_m = C_m/g_L$ \\
-		Passive step response & $v(t) = v_{rest} + \dfrac{I}{g_L}\left(1-e^{-t/\tau_m}\right)$ \\
-		LIF rule & $v\!\ge\! v_{th} \Rightarrow v\!\leftarrow\! v_{reset}$, refractory $t_{ref}$ \\
-		LIF rheobase & $I_{rheo} = g_L(v_{th}-v_{rest})$ \\
-		LIF F-I curve & $f(I) = \left[t_{ref} + \tau_m \ln\!\frac{IR}{IR-(v_{th}-v_{rest})}\right]^{-1}$ \\
-		EIF & $C_m \dot v = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} + I$ \\
-		AdEx ($v$) & $C_m \dot v = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} - w + I$ \\
-		AdEx ($w$) & $\tau_w \dot w = a(v-E_L) - w + b\tau_w\sum_f \delta(t-t^f)$ \\
-		AdEx spike reset & $v\!\leftarrow\! v_{reset}$, \quad $w \leftarrow w + b$ \\
-		v-nullcline & $w = -g_L(v-E_L) + g_L\Delta_T e^{(v-v_T)/\Delta_T} + I$ \\
-		w-nullcline & $w = a(v-E_L)$ \\
-		Euler step & $x_{n+1} = x_n + \Delta t\, f(x_n)$ \\
-		RK4 step & $x_{n+1} = x_n + \frac{\Delta t}{6}(k_1+2k_2+2k_3+k_4)$ \\
-		Exponential synapse & $\tau_{syn}\dot g = -g$, \; $g \leftarrow g+w_{syn}$ per spike \\
-		Alpha synapse & $\dot x = -x/\tau$ (jump $w_{syn}$ per spike), \; $\dot g = (x-g)/\tau$ \\
-		Poisson bin probability & $p_{spike} = R\Delta t / 1000$ \\
-		Shot-noise mean/variance & mean $=Rw\tau$, \; variance $\approx Rw^2\tau/2$ \\
-		ISI coefficient of variation & $CV = \text{std(ISI)}/\text{mean(ISI)}$ \\
-		Population rate & $r(t) = \dfrac{\text{spikes in bin}}{N\cdot\Delta_{bin}\text{[s]}}$ \\
-		Dale's law weight scaling & $w_{inh} = -g\cdot w_{exc}$, \; $g \gg 1$ for balance \\
-		\bottomrule
-	\end{longtable}
-\end{center}
-
 
 \newpage
 
