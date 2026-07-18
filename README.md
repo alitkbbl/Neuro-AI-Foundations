@@ -8,7 +8,7 @@
 
 ### 📌 The Evolutionary Path
 
-Each model is derived directly from its governing differential equation, with complexity added incrementally:
+Each model is derived directly from its governing differential equation, with complexity added incrementally to bridge the gap between biological realism and computational efficiency:
 
 | Step | Model | Key Feature | Spike Behaviour |
 |:---:|:---|:---|:---|
@@ -18,6 +18,15 @@ Each model is derived directly from its governing differential equation, with co
 | 4 | AdEx | Adaptation current | Bursting & adaptation |
 | 5 | Balanced Network | Sparse connectivity | Irregular, asynchronous firing |
 
+
+### Neuro-AI Foundations Study Guide
+
+For an in-depth analysis of the mathematical derivations, parameter dynamics, and biological intuition behind these models, please refer to the following guides:
+
+*  📘 [English Study Guide (PDF)](./doc/Neuro-AI-Foundations-Study-Guide.pdf)
+*  📘 [Persian Study Guide (PDF)](./doc/Persian.pdf)
+
+  
 ### Engineering Highlights
 
 Designed with production-grade standards to ensure accuracy and scalability:
